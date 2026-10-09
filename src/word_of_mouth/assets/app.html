@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3eee2">
+<title>Word of Mouth</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><rect width='10' height='10' fill='%23ff2d87'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3eee2;
+    --ink: #161412;
+    --ink-soft: #4a4540;
+    --hot: #ff2d87;
+    --card: #fffdf7;
+    --display: "Anton", "Impact", "Haettenschweiler", sans-serif;
+    --type: "Courier Prime", ui-monospace, Menlo, monospace;
+    --stamp: "Special Elite", "Courier Prime", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background-color: var(--paper);
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(120,100,60,.08), transparent 55%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--type);
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  a { color: inherit; }
+  .col { max-width: 440px; margin: 0 auto; padding: 18px 20px 70px; }
+
+  .mast { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px solid var(--ink); padding-bottom: 6px; margin-bottom: 24px; gap: 10px; }
+  .mast .logo { font-family: var(--display); font-size: 26px; letter-spacing: .5px; text-transform: uppercase; line-height: 1; text-decoration: none; color: var(--ink); }
+  .mast .logo em { font-style: normal; color: var(--hot); }
+  .mast .me { font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+  .mast .me b { color: var(--ink); }
+  .mast .me a { color: var(--ink-soft); }
+
+  h1, h2 { font-family: var(--display); text-transform: uppercase; font-weight: 400; letter-spacing: .3px; }
+  h1 { font-size: 50px; line-height: 1.04; margin: 0 0 22px; }
+  h2 { font-size: 30px; line-height: 1.05; margin: 0 0 16px; }
+  /* highlight sits on its own box so it never covers the line above */
+  .hl { display: inline-block; background: var(--hot); color: var(--ink); padding: 5px 8px 1px; margin-top: 8px; line-height: 1; }
+  .kicker { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--ink-soft); margin: 0 0 8px; }
+  p.lede { font-size: 17px; margin: 0 0 22px; }
+
+  /* index card */
+  .card {
+    position: relative; background-color: var(--card);
+    border: 3px solid var(--ink);
+    box-shadow: 7px 7px 0 var(--ink);
+    padding: 28px 20px 22px;
+    margin: 30px 6px 34px;
+    transform: rotate(-1.2deg);
+    background-image: repeating-linear-gradient(to bottom, transparent 0 27px, rgba(70,120,190,.18) 27px 28px);
+    background-position: 0 54px;
+  }
+  .card.tilt-r { transform: rotate(1deg); }
+  .card::before { content: ""; position: absolute; top: 0; bottom: 0; left: 30px; width: 1.5px; background: rgba(255,45,135,.35); }
+  .tape {
+    position: absolute; top: -16px; left: 50%; width: 110px; height: 28px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: rgba(236,224,180,.8);
+    border-left: 2px dashed rgba(0,0,0,.06); border-right: 2px dashed rgba(0,0,0,.06);
+  }
+  .card .type-tag { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--ink-soft); padding-left: 18px; }
+  .card .title { font-family: var(--display); font-size: 34px; text-transform: uppercase; line-height: 1.02; margin: 4px 0 10px; padding-left: 18px; overflow-wrap: anywhere; }
+  .card .note { font-size: 16px; padding-left: 18px; margin: 0 0 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .card .link { display: inline-block; margin-left: 18px; font-size: 14px; color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--hot); overflow-wrap: anywhere; }
+  .card .stamp-row { display: flex; justify-content: flex-end; padding-top: 14px; }
+
+  .stamp {
+    display: inline-block; font-family: var(--stamp); text-transform: uppercase;
+    font-size: 20px; letter-spacing: 2px; line-height: 1;
+    padding: 8px 12px 6px; border: 3px solid currentColor; border-radius: 3px;
+    color: var(--hot); opacity: .9; filter: url(#bleed); mix-blend-mode: multiply;
+    transform: rotate(-7deg); pointer-events: none;
+  }
+  .stamp.ink { color: #1e1b19; opacity: .78; }
+  .stamp.big { font-size: 30px; border-width: 4px; padding: 10px 14px 7px; }
+  .stamp-corner { position: absolute; right: 16px; top: 22px; transform: rotate(11deg); }
+
+  .chain { font-size: 16px; margin: 0 0 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 2px; }
+  .chain .who { border: 2px solid var(--ink); padding: 1px 8px; background: var(--card); }
+  .chain .who.you { background: var(--ink); color: var(--paper); }
+  .chain .arr { padding: 0 4px; font-weight: 700; }
+  .chain .who.next { border-style: dashed; background: transparent; color: var(--ink-soft); }
+  .chain-label { margin-bottom: 6px; }
+
+  .notes { list-style: none; padding: 0; margin: 0 0 24px; border-left: 3px solid var(--ink); }
+  .notes li { padding: 8px 0 10px 14px; border-bottom: 1px dashed rgba(0,0,0,.25); }
+  .notes li:last-child { border-bottom: 0; }
+  .notes .by { font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+  .notes .txt { font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--display); font-size: 22px; text-transform: uppercase; letter-spacing: .5px;
+    padding: 12px 18px 10px; min-height: 54px;
+    color: var(--ink); background: var(--card);
+    border: 3px solid var(--ink); border-radius: 0;
+    box-shadow: 5px 5px 0 var(--ink);
+    cursor: pointer; text-decoration: none;
+    transition: transform .06s, box-shadow .06s;
+    -webkit-appearance: none; appearance: none;
+  }
+  .btn:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--ink); }
+  .btn.hot { background: var(--hot); }
+  .btn.ink { background: var(--ink); color: var(--paper); box-shadow: 5px 5px 0 var(--hot); }
+  .btn.ink:active { box-shadow: 0 0 0 var(--hot); }
+  .btn.block { width: 100%; }
+  .btn[disabled] { opacity: .5; pointer-events: none; }
+  .row { display: flex; gap: 14px; margin: 14px 0; }
+  .row .btn { flex: 1; }
+  .textlink { display: inline-block; margin-top: 18px; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+
+  label.f { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin: 18px 0 6px; font-weight: 700; }
+  .in {
+    width: 100%; font-family: var(--type); font-size: 18px; color: var(--ink);
+    background: var(--card); border: 3px solid var(--ink); border-radius: 0; padding: 10px 12px; outline: none;
+    -webkit-appearance: none; appearance: none;
+  }
+  .in:focus { box-shadow: 4px 4px 0 var(--hot); }
+  textarea.in { min-height: 90px; resize: vertical; }
+  .in.big { font-family: var(--display); font-size: 28px; text-transform: uppercase; padding: 10px 12px 6px; }
+
+  .seg { display: grid; grid-template-columns: 1fr 1fr; border: 3px solid var(--ink); margin: 6px 0 4px; }
+  .seg.four { grid-template-columns: repeat(4, 1fr); }
+  .seg button { font-family: var(--display); font-size: 19px; text-transform: uppercase; padding: 10px 4px 8px; background: var(--card); border: 0; cursor: pointer; color: var(--ink); }
+  .seg button + button { border-left: 3px solid var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .seg-hint { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+
+  .handoff { text-align: center; }
+  .qrbox { display: inline-block; background: #fff; border: 3px solid var(--ink); box-shadow: 7px 7px 0 var(--ink); padding: 12px; margin: 8px 0 22px; position: relative; }
+  .qrbox img { display: block; width: 240px; height: 240px; image-rendering: pixelated; }
+  .qrbox .stamp { position: absolute; right: -26px; bottom: -16px; font-size: 14px; }
+  .urlslip { font-size: 13px; background: var(--card); border: 2px dashed var(--ink); padding: 8px 10px; word-break: break-all; margin: 0 0 16px; text-align: left; }
+  .status { font-size: 15px; margin: 18px 0 0; min-height: 22px; }
+  .status b { background: var(--hot); padding: 0 4px; }
+
+  .notice { border: 3px solid var(--ink); background: var(--card); padding: 12px 14px; margin: 0 0 18px; font-size: 15px; }
+  .notice.hot { background: var(--hot); }
+  .err { color: #b00045; font-weight: 700; font-size: 14px; min-height: 20px; margin-top: 10px; }
+
+  .tabs { display: flex; border-bottom: 3px solid var(--ink); margin: 6px 0 4px; }
+  .tabs button { font-family: var(--display); font-size: 18px; text-transform: uppercase; background: none; border: 0; padding: 8px 12px 6px; cursor: pointer; color: var(--ink-soft); }
+  .tabs button[aria-pressed="true"] { color: var(--ink); background: var(--hot); }
+  .tabs .ct { font-family: var(--type); font-size: 12px; vertical-align: top; }
+  .shelf-item { display: block; text-decoration: none; background: var(--card); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 12px 14px; margin: 20px 4px; }
+  .shelf-item:nth-child(odd) { transform: rotate(-.6deg); }
+  .shelf-item:nth-child(even) { transform: rotate(.5deg); }
+  .shelf-item .t { font-family: var(--display); font-size: 24px; text-transform: uppercase; line-height: 1.05; margin-bottom: 6px; overflow-wrap: anywhere; }
+  .shelf-item .c { font-size: 13px; color: var(--ink-soft); }
+  .shelf-item .reach { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-top: 2px solid var(--hot); }
+  .empty { border: 3px dashed var(--ink); padding: 26px 18px; text-align: center; margin: 22px 0; }
+  .empty .big { font-family: var(--display); font-size: 28px; text-transform: uppercase; }
+
+
+  /* ---- live tree ---- */
+  .tree-page { padding: 16px 18px 40px; max-width: 1800px; margin: 0 auto; }
+  .tree-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; border-bottom: 4px solid var(--ink); padding-bottom: 10px; margin-bottom: 12px; }
+  .tree-head h1 { font-size: clamp(34px, 5.4vw, 92px); margin: 0; line-height: 1; overflow-wrap: anywhere; }
+  .tree-head .kicker { margin-bottom: 6px; }
+  .tree-stats { text-align: right; font-size: 15px; white-space: nowrap; }
+  .tree-stats b { font-family: var(--display); font-size: clamp(40px, 5vw, 84px); font-weight: 400; display: block; line-height: 1; }
+  .tree-stats .live { color: var(--hot); font-weight: 700; letter-spacing: 2px; }
+  .tree-stats .live::before { content: ""; display: inline-block; width: 10px; height: 10px; background: var(--hot); border-radius: 50%; margin-right: 6px; animation: blink 1.2s infinite; }
+  .tree-stats .live.off { color: var(--ink-soft); }
+  .tree-stats .live.off::before { background: var(--ink-soft); animation: none; }
+  @keyframes blink { 50% { opacity: .2; } }
+  .tree-body { display: flex; flex-direction: column; gap: 22px; }
+  .tree-canvas { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px 4px 12px; }
+  .tree-canvas svg { display: block; overflow: visible; margin: 0 auto; }
+  .tree-scan { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .tree-scan .qr { background: #fff; border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); padding: 10px; }
+  .tree-scan .qr img { display: block; width: min(78vw, 330px); height: auto; aspect-ratio: 1; image-rendering: pixelated; }
+  .tree-scan .say { font-family: var(--display); text-transform: uppercase; font-size: 30px; line-height: 1.05; margin-top: 18px; }
+  .tree-scan .small { font-size: 12px; color: var(--ink-soft); margin-top: 8px; word-break: break-all; }
+  .tree-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+  .edge { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; filter: url(#rough); }
+  .edge.new { stroke-dasharray: 900; stroke-dashoffset: 900; animation: draw 1s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .tag rect { fill: var(--card); stroke: var(--ink); stroke-width: 3; }
+  .tag text { font-family: var(--type); font-size: 21px; font-weight: 700; fill: var(--ink); }
+  .tag .hole { fill: var(--paper); stroke: var(--ink); stroke-width: 2; }
+  .tag.root rect { fill: var(--ink); }
+  .tag.root text { fill: var(--paper); }
+  .tag.you rect { stroke: var(--hot); stroke-width: 5; }
+  .tag.new .pop { animation: popin .55s cubic-bezier(.3,1.6,.5,1) both .6s; transform-box: fill-box; transform-origin: center; }
+  .tag.new rect { animation: flash 5s ease-in forwards .6s; fill: var(--hot); }
+  @keyframes popin { from { transform: scale(0) rotate(-14deg); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes flash { 0%, 70% { fill: var(--hot); } 100% { fill: var(--card); } }
+  .tree-empty { text-align: center; font-size: 15px; color: var(--ink-soft); margin-top: 6px; }
+
+  /* projector / wide screens: tree left, giant QR right, all on one screen */
+  @media (min-width: 900px) {
+    .tree-page { height: 100vh; display: flex; flex-direction: column; padding: 22px 30px 22px; }
+    .tree-body { flex: 1; min-height: 0; flex-direction: row; align-items: stretch; gap: 34px; }
+    .tree-canvas { flex: 1; min-width: 0; overflow: hidden; display: flex; align-items: flex-start; justify-content: center; }
+    .tree-canvas svg { width: 100%; height: 100%; }
+    .tree-scan { flex: 0 0 auto; justify-content: center; }
+    .tree-scan .qr img { width: min(34vw, calc(100vh - 400px)); }
+    .tree-scan .say { font-size: clamp(30px, 3vw, 54px); }
+    .tree-page .mast { display: none; }
+  }
+
+  .loading { text-align: center; padding: 60px 0; font-family: var(--display); font-size: 28px; text-transform: uppercase; }
+  .foot-note { font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 26px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="bleed" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" result="d"/>
+    <feGaussianBlur in="d" stdDeviation=".3" result="b"/>
+    <feComponentTransfer in="noise" result="holes"><feFuncA type="discrete" tableValues="1 1 1 1 1 1 0 1 1 1 1 1 1 1"/></feComponentTransfer>
+    <feComposite in="b" in2="holes" operator="in"/>
+  </filter>
+  <filter id="rough" filterUnits="userSpaceOnUse" x="-500" y="-500" width="20000" height="20000"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="4"/></filter>
+</svg>
+<main id="app"><div class="loading">Loading&hellip;</div></main>
+
+<script>
+const $app = document.getElementById("app");
+const KIND_LABEL = { food: "Food spot", song: "Song", book: "Book", other: "Rec" };
+
+// ---- identity: a random id and a name, kept on this phone only ----
+const me = {
+  get id() {
+    let id = localStorage.getItem("wom_person_id");
+    if (!id) { id = crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now(); localStorage.setItem("wom_person_id", id); }
+    return id;
+  },
+  get name() { return localStorage.getItem("wom_name") || ""; },
+  set name(v) { localStorage.setItem("wom_name", v); },
+};
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+async function api(path, body) {
+  const res = await fetch(path, body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({ error: "Something went wrong. Try again." }));
+  if (!res.ok) throw new Error(data.error || "Something went wrong. Try again.");
+  return data;
+}
+
+function nav(path) { history.pushState({}, "", path); route(); }
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-nav]");
+  if (a) { e.preventDefault(); nav(a.getAttribute("href")); }
+});
+window.addEventListener("popstate", route);
+
+let pollTimer = null;
+function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+
+function mast() {
+  return `<div class="mast"><a class="logo" href="/" data-nav>Word <em>of</em> Mouth</a>
+    ${me.name ? `<div class="me">you're <b>${esc(me.name)}</b> &middot; <a href="/shelf" data-nav>shelf</a></div>` : ""}</div>`;
+}
+
+function render(html) { $app.innerHTML = html; window.scrollTo(0, 0); }
+
+// ---- screens ----
+
+function askName(then) {
+  render(`<div class="col">${mast()}
+    <p class="kicker">${location.pathname.startsWith("/r/") ? "Someone handed you something" : "Hand-to-hand recs"}</p>
+    <h1>No algorithm.<br><span class="hl">Just people.</span></h1>
+    <p class="lede">Recs here only move hand to hand. No feed, no search, no stars. First, what do people call you?</p>
+    <form id="f">
+      <label class="f" for="nm">Your name</label>
+      <input class="in big" id="nm" maxlength="40" autocomplete="given-name" placeholder="e.g. Sam" required>
+      <div style="margin-top:22px"><button class="btn hot block" type="submit">That's me</button></div>
+    </form>
+    <p class="foot-note">No account. It's saved on this phone only.</p></div>`);
+  const input = document.getElementById("nm");
+  input.focus();
+  document.getElementById("f").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = input.value.trim();
+    if (!v) return;
+    me.name = v;
+    then();
+  });
+}
+
+function home() {
+  render(`<div class="col">${mast()}
+    <p class="kicker">Hey ${esc(me.name)}</p>
+    <h1>No algorithm.<br><span class="hl">Just people.</span></h1>
+    <p class="lede">Start a rec and hand it to someone who deserves it. They pass it on. You watch where it goes.</p>
+    <a class="btn hot block" href="/start" data-nav>Start a rec</a>
+    <div style="margin-top:18px"><a class="btn block" href="/shelf" data-nav>My shelf</a></div></div>`);
+}
+
+function startScreen() {
+  let kind = "food";
+  render(`<div class="col">${mast()}
+    <p class="kicker">Start something</p>
+    <h1>What's<br><span class="hl">worth it?</span></h1>
+    <form id="f">
+      <label class="f">What kind</label>
+      <div class="seg four" id="kinds">
+        <button type="button" data-kind="food" aria-pressed="true">Food</button><button type="button" data-kind="song">Song</button><button type="button" data-kind="book">Book</button><button type="button" data-kind="other">Other</button>
+      </div>
+      <label class="f" for="t">Title</label>
+      <input class="in big" id="t" maxlength="120" placeholder="Name the thing" required>
+      <label class="f" for="n">Short note</label>
+      <textarea class="in" id="n" maxlength="600" placeholder="Why it's good, in a sentence or two"></textarea>
+      <label class="f" for="l">Link (optional)</label>
+      <input class="in" id="l" maxlength="500" inputmode="url" placeholder="https://">
+      <div style="margin-top:24px"><button class="btn hot block" type="submit" id="go">Start it &amp; pass it on</button></div>
+      <div class="err" id="err"></div>
+    </form></div>`);
+  document.getElementById("kinds").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-kind]"); if (!b) return;
+    kind = b.dataset.kind;
+    document.querySelectorAll("[data-kind]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  });
+  document.getElementById("f").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const go = document.getElementById("go"); go.disabled = true;
+    try {
+      const r = await api("/api/recs", { person_id: me.id, name: me.name, kind,
+        title: document.getElementById("t").value, note: document.getElementById("n").value, link: document.getElementById("l").value });
+      nav(`/pass/${r.node_id}`);
+    } catch (err) { document.getElementById("err").textContent = err.message; go.disabled = false; }
+  });
+}
+
+function cardHtml(rec, stamp) {
+  return `<div class="card${stamp === "kept" ? " tilt-r" : ""}"><div class="tape"></div>
+    <div class="type-tag">${esc(KIND_LABEL[rec.kind] || "Rec")}</div>
+    <div class="title">${esc(rec.title)}</div>
+    ${rec.note ? `<p class="note">${esc(rec.note)}</p>` : ""}
+    ${rec.link ? `<a class="link" href="${esc(rec.link)}" target="_blank" rel="noopener noreferrer">${esc(rec.link.replace(/^https?:\/\//, ""))}</a>` : ""}
+    ${stamp === "kept" ? `<div class="stamp-row"><div class="stamp big">Kept</div></div>` : ""}
+    ${stamp === "started" ? `<div class="stamp-row"><div class="stamp big">Started it</div></div>` : ""}
+    ${stamp === "hand" ? `<div class="stamp-row"><div class="stamp">Passed by hand</div></div>` : ""}
+  </div>`;
+}
+
+function chainHtml(chain, mineIsLast) {
+  const boxes = chain.map((c, i) => {
+    const you = mineIsLast && i === chain.length - 1;
+    return `${i ? '<span class="arr">&rarr;</span>' : ""}<span class="who${you ? " you" : ""}">${esc(c.name)}${you ? " (you)" : ""}</span>`;
+  }).join("");
+  const next = mineIsLast ? '<span class="arr">&rarr;</span><span class="who next">next?</span>' : "";
+  return `<p class="kicker chain-label">The chain</p><div class="chain">${boxes}${next}</div>`;
+}
+
+function notesHtml(chain, myNodeId) {
+  // the starter's note is already on the card; show everyone after them
+  const later = chain.slice(1).filter(c => c.note && c.node_id !== myNodeId);
+  if (!later.length) return "";
+  return `<h2>Notes along the way</h2><ul class="notes">${later.map(c =>
+    `<li><div class="by">${esc(c.name)}</div><div class="txt">${esc(c.note)}</div></li>`).join("")}</ul>`;
+}
+
+// A rec as seen by someone in its chain (opened from a link or the shelf).
+function recScreen(v, opts = {}) {
+  const chain = v.chain;
+  const handedBy = chain.length > 1 ? chain[chain.length - 2].name : null;
+  let notice = "";
+  if (opts.status === "already" && opts.fromLink) notice = `<div class="notice">You already have this one. Here's where it sits for you.</div>`;
+  if (opts.status === "joined" && opts.mode === "one" && opts.toName && opts.toName.toLowerCase() !== me.name.toLowerCase())
+    notice = `<div class="notice">This was meant for ${esc(opts.toName)}. It's yours now.</div>`;
+  const kicker = v.is_starter ? "You started this one" : `${esc(handedBy)} handed you this`;
+  const reach = v.reach > 0 ? `<p class="kicker" style="margin-top:-6px">Reached ${v.reach} ${v.reach === 1 ? "person" : "people"} so far</p>` : "";
+
+  if (v.kept && !opts.justOpened) {
+    render(`<div class="col">${mast()}${notice}
+      <p class="kicker">${kicker}</p>${chainHtml(chain, true)}${reach}
+      ${cardHtml(v.rec, v.is_starter ? "started" : "kept")}
+      ${notesHtml(chain, v.node_id)}
+      ${!v.is_starter && v.my_note ? `<h2>Your note</h2><ul class="notes"><li><div class="txt">${esc(v.my_note)}</div></li></ul>` : ""}
+      <h2>${opts.justKept ? "It's on your shelf." : "Still good?"}</h2>
+      <p class="lede">Now, who deserves this one?</p>
+      <a class="btn ink block" href="/pass/${v.node_id}" data-nav>Pass it on</a>
+      <a class="textlink" href="/t/${v.rec.id}" data-nav>See where it went &rarr;</a></div>`);
+    return;
+  }
+
+  render(`<div class="col">${mast()}${notice}
+    <p class="kicker">${kicker}</p>${chainHtml(chain, true)}${reach}
+    ${cardHtml(v.rec, "hand")}
+    ${notesHtml(chain, v.node_id)}
+    <label class="f" for="mynote">Add your note (optional)</label>
+    <textarea class="in" id="mynote" maxlength="600" placeholder="What should the next person know?">${esc(v.my_note)}</textarea>
+    <div class="row">
+      <button class="btn hot" id="keep">Keep it</button>
+      <button class="btn ink" id="pass">Pass it on</button>
+    </div>
+    <div class="err" id="err"></div>
+    <a class="textlink" href="/t/${v.rec.id}" data-nav>See where it went &rarr;</a></div>`);
+  const note = () => document.getElementById("mynote").value;
+  document.getElementById("keep").addEventListener("click", async () => {
+    try {
+      const nv = await api(`/api/nodes/${v.node_id}/keep`, { person_id: me.id, note: note() });
+      history.replaceState({}, "", `/rec/${v.node_id}`);
+      recScreen(nv, { justKept: true });
+    } catch (err) { document.getElementById("err").textContent = err.message; }
+  });
+  document.getElementById("pass").addEventListener("click", async () => {
+    try {
+      await api(`/api/nodes/${v.node_id}/keep`, { person_id: me.id, note: note() });
+      nav(`/pass/${v.node_id}`);
+    } catch (err) { document.getElementById("err").textContent = err.message; }
+  });
+}
+
+async function openLink(token) {
+  try {
+    const v = await api(`/api/links/${token}/open`, { person_id: me.id, name: me.name });
+    if (v.status === "taken") {
+      const from = v.chain[v.chain.length - 1].name;
+      render(`<div class="col">${mast()}
+        <div class="notice hot">This link was for one person, and someone already opened it. Ask ${esc(from)} to make you your own.</div>
+        <p class="kicker">${esc(from)} passed this on</p>${chainHtml(v.chain, false)}
+        ${cardHtml(v.rec, "hand")}</div>`);
+      return;
+    }
+    history.replaceState({}, "", `/rec/${v.node_id}`);
+    recScreen(v, { status: v.status, mode: v.link_mode, toName: v.to_name, fromLink: true, justOpened: v.status === "joined" });
+  } catch (err) { errorScreen(err.message); }
+}
+
+async function myRec(nodeId) {
+  try { recScreen(await api(`/api/nodes/${nodeId}?me=${encodeURIComponent(me.id)}`)); }
+  catch (err) { errorScreen(err.message); }
+}
+
+async function passScreen(nodeId) {
+  let v;
+  try { v = await api(`/api/nodes/${nodeId}?me=${encodeURIComponent(me.id)}`); }
+  catch (err) { return errorScreen(err.message); }
+  let mode = "one";
+  render(`<div class="col">${mast()}
+    <p class="kicker">${esc(v.rec.title)}</p>
+    <h1>Who deserves<br><span class="hl">this one?</span></h1>
+    <form id="f">
+      <div class="seg">
+        <button type="button" aria-pressed="true" data-mode="one">One person</button>
+        <button type="button" data-mode="group">The whole room</button>
+      </div>
+      <p class="seg-hint" id="hint">A link that works once, for one person.</p>
+      <div id="one">
+        <label class="f" for="to">Their name</label>
+        <input class="in big" id="to" maxlength="40" placeholder="Who?">
+      </div>
+      <div style="margin-top:24px"><button class="btn hot block" type="submit" id="go">Make the link</button></div>
+      <div class="err" id="err"></div>
+    </form></div>`);
+  document.getElementById("to").focus();
+  document.querySelectorAll("[data-mode]").forEach(b => b.addEventListener("click", () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll("[data-mode]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    document.getElementById("one").style.display = mode === "group" ? "none" : "";
+    document.getElementById("hint").textContent = mode === "group"
+      ? "One link for everyone. Each person who opens it joins as a new branch under you."
+      : "A link that works once, for one person.";
+  }));
+  document.getElementById("f").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const go = document.getElementById("go"); go.disabled = true;
+    try {
+      const r = await api(`/api/nodes/${nodeId}/links`, { person_id: me.id, mode, to_name: document.getElementById("to").value });
+      nav(`/h/${r.token}`);
+    } catch (err) { document.getElementById("err").textContent = err.message; go.disabled = false; }
+  });
+}
+
+async function handoffScreen(token) {
+  let l;
+  try { l = await api(`/api/links/${token}`); } catch (err) { return errorScreen(err.message); }
+  const group = l.mode === "group";
+  render(`<div class="col handoff">${mast()}
+    <p class="kicker">${group ? "For the whole room" : `For ${esc(l.to_name)} only`}</p>
+    <h2>Hold up your phone.<br>Or text it.</h2>
+    <div class="qrbox"><img src="/api/links/${token}/qr.svg" alt="QR code for the link"><div class="stamp ink">${group ? "Open to all" : "One use"}</div></div>
+    <div class="urlslip" id="url">${esc(l.url)}</div>
+    <div class="row">
+      <button class="btn" id="copy">Copy link</button>
+      <button class="btn ink" id="share">Text it</button>
+    </div>
+    <p class="status" id="status"></p>
+    ${group ? `<a class="btn block" style="margin-top:18px" href="/t/${l.rec.id}?link=${token}" data-nav>Show the live tree</a>` : ""}
+    <a class="textlink" href="/rec/${l.from_node_id}" data-nav>&larr; Back to the rec</a></div>`);
+  document.getElementById("copy").addEventListener("click", async (e) => {
+    try { await navigator.clipboard.writeText(l.url); e.target.textContent = "Copied"; }
+    catch { const r = document.createRange(); r.selectNodeContents(document.getElementById("url")); getSelection().removeAllRanges(); getSelection().addRange(r); }
+  });
+  document.getElementById("share").addEventListener("click", async () => {
+    const text = `${me.name} passed you a rec: ${l.rec.title}`;
+    if (navigator.share) { try { await navigator.share({ title: "Word of Mouth", text, url: l.url }); } catch {} }
+    else location.href = `sms:?&body=${encodeURIComponent(text + " " + l.url)}`;
+  });
+  const showStatus = (s) => {
+    const el = document.getElementById("status"); if (!el) return stopPolling();
+    if (group) el.innerHTML = s.joined ? `<b>${s.joined}</b> ${s.joined === 1 ? "person has" : "people have"} joined through this link.` : "Waiting for people to scan&hellip;";
+    else el.innerHTML = s.claimed_by ? `<b>${esc(s.claimed_by)}</b> opened it. They're in the chain now.` : `Waiting for ${esc(l.to_name)} to open it&hellip;`;
+  };
+  showStatus(l);
+  stopPolling();
+  pollTimer = setInterval(async () => { try { showStatus(await api(`/api/links/${token}`)); } catch {} }, 3000);
+}
+
+async function shelfScreen() {
+  let s;
+  try { s = await api(`/api/shelf?me=${encodeURIComponent(me.id)}`); } catch (err) { return errorScreen(err.message); }
+  let tab = s.got.length ? "got" : s.started.length ? "started" : "got";
+  const EMPTY = {
+    got: ["Nothing yet", "Recs people hand you land here."],
+    passed: ["Nothing passed yet", "Got something good? Hand it on."],
+    started: ["Nothing started yet", "Got a taco spot nobody knows about?"],
+  };
+  const draw = () => {
+    const items = s[tab];
+    render(`<div class="col">${mast()}
+      <h1>My shelf</h1>
+      <div class="tabs">
+        ${["got", "passed", "started"].map(t => `<button data-tab="${t}" aria-pressed="${t === tab}">${t} <span class="ct">${s[t].length}</span></button>`).join("")}
+      </div>
+      ${items.length ? items.map(i => `<a class="shelf-item" href="/rec/${i.node_id}" data-nav>
+          <div class="t">${esc(i.rec.title)}</div>
+          <div class="c">${i.chain.map((n, k) => k === i.chain.length - 1 ? "you" : esc(n)).join(" &rarr; ")}</div>
+          <div class="reach">Reached ${i.reach}</div></a>`).join("")
+        : `<div class="empty"><div class="big">${EMPTY[tab][0]}</div><p style="margin:6px 0 14px">${EMPTY[tab][1]}</p><a class="btn hot" href="/start" data-nav>Start a rec</a></div>`}
+      </div>`);
+    document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => { tab = b.dataset.tab; draw(); }));
+  };
+  draw();
+}
+
+
+// ---- live tree ----
+// Layout: top-down; a node's children wrap into rows so a whole room joining
+// under one person stays readable instead of one endless line.
+function layoutTree(nodes, rowLimit) {
+  const byId = new Map(nodes.map(n => [n.id, { ...n, kids: [] }]));
+  let root = null;
+  for (const n of byId.values()) {
+    if (n.parent && byId.has(n.parent)) byId.get(n.parent).kids.push(n); else if (!root) root = n;
+  }
+  const TAG_H = 44, ROW_H = 118, GAP = 22, GUT = 34, RAIL = 34;
+  const tagW = n => Math.max(86, n.label.length * 12.6 + 46);
+  function measure(n) {
+    n.tw = tagW(n);
+    n.kids.forEach(measure);
+    n.rows = [];
+    let row = [], rw = 0;
+    for (const k of n.kids) {
+      if (row.length && rw + k.w > rowLimit) { n.rows.push({ kids: row, w: rw }); row = []; rw = 0; }
+      row.push(k); rw += k.w;
+    }
+    if (row.length) n.rows.push({ kids: row, w: rw });
+    n.rows.forEach(r => r.h = Math.max(...r.kids.map(k => k.h)));
+    // several rows: kids hang from one rail per row, fed by a trunk in a left gutter
+    n.multi = n.rows.length > 1;
+    const gut = n.multi ? GUT : 0, rail = n.multi ? RAIL : 0;
+    n.w = Math.max(n.tw + GAP, ...n.rows.map(r => r.w + gut));
+    n.h = (n.multi ? ROW_H - 30 : ROW_H) + n.rows.reduce((a, r) => a + r.h + rail, 0);
+  }
+  function place(n, x0, y0, depth) {
+    n.x = x0 + n.w / 2; n.y = y0 + TAG_H / 2; n.depth = depth;
+    const gut = n.multi ? GUT : 0, rail = n.multi ? RAIL : 0;
+    n.gx = x0 + GUT * 0.45;
+    let y = y0 + (n.multi ? ROW_H - 30 : ROW_H);
+    for (const r of n.rows) {
+      r.railY = y + 4;
+      let x = x0 + gut + (n.w - gut - r.w) / 2;
+      for (const k of r.kids) { place(k, x, y + rail, depth + 1); x += k.w; }
+      y += r.h + rail;
+    }
+  }
+  if (!root) return null;
+  measure(root); place(root, 0, 0, 0);
+  return { root, all: [...byId.values()], W: root.w, H: root.h - ROW_H + TAG_H + 10 };
+}
+
+function wob(str, k) { let h = 7 * k; for (const c of str) h = (h * 31 + c.charCodeAt(0)) | 0; return ((Math.abs(h) % 1000) / 1000) - .5; }
+
+function treeSvg(data, seen, wide) {
+  const nodes = data.nodes.map(n => ({ ...n, label: n.id === data.my_node_id ? `${n.name} (you)` : n.name }));
+  const L = layoutTree(nodes, wide ? 1150 : 380);
+  if (!L) return "";
+  let edges = "", tags = "";
+  for (const n of L.all) {
+    const f = v => v.toFixed(1);
+    if (n.multi) {
+      const r0 = n.rows[0].railY, rN = n.rows[n.rows.length - 1].railY;
+      edges += `<path class="edge" d="M${f(n.x)},${f(n.y + 20)} Q${f(n.x)},${f(r0)} ${f(n.gx)},${f(r0)} L${f(n.gx + wob(n.id, 4) * 4)},${f(rN)}"/>`;
+      for (const r of n.rows) {
+        const last = r.kids[r.kids.length - 1];
+        edges += `<path class="edge" d="M${f(n.gx)},${f(r.railY)} Q${f((n.gx + last.x) / 2)},${f(r.railY + wob(n.id + r.railY, 5) * 6)} ${f(last.x)},${f(r.railY)}"/>`;
+        for (const k of r.kids)
+          edges += `<path class="edge${seen.has(k.id) ? "" : " new"}" d="M${f(k.x)},${f(r.railY)} L${f(k.x + wob(k.id, 6) * 5)},${f(k.y - 21)}"/>`;
+      }
+    } else for (const k of n.kids) {
+      const x1 = n.x, y1 = n.y + 20, x2 = k.x, y2 = k.y - 21;
+      const mx = (x1 + x2) / 2 + wob(k.id, 1) * 26, my = (y1 + y2) / 2 + wob(k.id, 2) * 16;
+      edges += `<path class="edge${seen.has(k.id) ? "" : " new"}" d="M${f(x1)},${f(y1)} Q${f(mx)},${f(my)} ${f(x2)},${f(y2)}"/>`;
+    }
+    const cls = ["tag", n.parent ? "" : "root", n.id === data.my_node_id ? "you" : "", seen.has(n.id) ? "" : "new"].filter(Boolean).join(" ");
+    const rot = (wob(n.id, 3) * 7).toFixed(1);
+    tags += `<g class="${cls}" transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)}) rotate(${rot})"><g class="pop">
+      <rect x="${-n.tw / 2}" y="-21" width="${n.tw}" height="42" rx="2"/>
+      <circle class="hole" cx="${-n.tw / 2 + 13}" cy="0" r="4.5"/>
+      <text x="8" y="7" text-anchor="middle">${esc(n.label)}</text></g></g>`;
+  }
+  const pad = 16;
+  const size = wide ? `preserveAspectRatio="xMidYMin meet"` : `width="${Math.max(L.W, 300)}" style="max-width:${L.W > 420 ? "none" : "100%"}"`;
+  // on big screens never scale a small tree past readable-and-bold
+  const vbW = wide ? Math.max(L.W + pad * 2, 1000) : L.W + pad * 2;
+  const vbH = wide ? Math.max(L.H + pad * 2, 520) : L.H + pad * 2;
+  return `<svg ${size} viewBox="${-(vbW - L.W) / 2} ${-pad} ${vbW} ${vbH}">${edges}${tags}</svg>`;
+}
+
+async function treeScreen(recId) {
+  const params = new URLSearchParams(location.search);
+  let data;
+  try { data = await api(`/api/recs/${recId}/tree?me=${encodeURIComponent(me.id)}`); }
+  catch (err) { return errorScreen(err.message); }
+
+  // The QR on this page is a whole-room link: the one passed in, else the viewer's own.
+  let token = params.get("link");
+  if (!token && data.my_node_id) {
+    try { token = (await api(`/api/nodes/${data.my_node_id}/links`, { person_id: me.id, mode: "group" })).token; } catch {}
+  }
+  let link = null;
+  if (token) { try { link = await api(`/api/links/${token}`); } catch {} }
+  const starter = data.nodes.find(n => !n.parent);
+
+  render(`<div class="tree-page">${mast()}
+    <div class="tree-head">
+      <div><p class="kicker">Started by ${esc(starter ? starter.name : "someone")}</p><h1>${esc(data.rec.title)}</h1></div>
+      <div class="tree-stats"><span class="live" id="live">Live</span><b id="count">0</b><span id="countlabel">people reached</span></div>
+    </div>
+    <div class="tree-body">
+      <div class="tree-canvas" id="canvas"></div>
+      ${link ? `<div class="tree-scan">
+        <div class="qr"><img src="/api/links/${token}/qr.svg" alt="QR code to join"></div>
+        <div class="say">Scan it.<br><span class="hl">Join the chain.</span></div>
+        <div class="small">${esc(link.url)}</div>
+      </div>` : ""}
+    </div>
+    ${data.my_node_id ? `<div class="tree-actions" id="actions"><a class="textlink" href="/rec/${data.my_node_id}" data-nav>&larr; Back to the rec</a></div>` : ""}
+  </div>`);
+
+  const seen = new Set(data.nodes.map(n => n.id)); // no flash for people already there
+  let lastCount = -1, wideNow = null;
+  const draw = (d, force) => {
+    const wide = matchMedia("(min-width: 900px)").matches;
+    if (!force && d.nodes.length === lastCount && wide === wideNow) return;
+    lastCount = d.nodes.length; wideNow = wide;
+    const canvas = document.getElementById("canvas"); if (!canvas) return;
+    canvas.innerHTML = treeSvg(d, seen, wide) + (d.nodes.length <= 1 ? `<p class="tree-empty">Nobody else yet. Hand it to someone.</p>` : "");
+    const reached = d.nodes.length - 1;
+    document.getElementById("count").textContent = reached;
+    document.getElementById("countlabel").textContent = reached === 1 ? "person reached" : "people reached";
+    d.nodes.forEach(n => seen.add(n.id));
+  };
+  draw(data, true);
+  window.onresize = () => draw(data, false);
+  stopPolling();
+  let failures = 0;
+  pollTimer = setInterval(async () => {
+    if (!document.getElementById("canvas")) return stopPolling();
+    try {
+      data = await api(`/api/recs/${recId}/tree?me=${encodeURIComponent(me.id)}`);
+      failures = 0; document.getElementById("live").classList.remove("off");
+      draw(data, false);
+    } catch { if (++failures > 2) document.getElementById("live").classList.add("off"); }
+  }, 2000);
+}
+
+function errorScreen(msg) {
+  render(`<div class="col">${mast()}<h2>Hm.</h2><div class="notice">${esc(msg)}</div><a class="btn block" href="/" data-nav>Go home</a></div>`);
+}
+
+// ---- router ----
+function route() {
+  stopPolling();
+  window.onresize = null;
+  const p = location.pathname;
+  if (!me.name) return askName(route);
+  let m;
+  if ((m = p.match(/^\/r\/([\w-]+)$/))) return openLink(m[1]);
+  if ((m = p.match(/^\/rec\/([\w-]+)$/))) return myRec(m[1]);
+  if ((m = p.match(/^\/pass\/([\w-]+)$/))) return passScreen(m[1]);
+  if ((m = p.match(/^\/h\/([\w-]+)$/))) return handoffScreen(m[1]);
+  if ((m = p.match(/^\/t\/([\w-]+)$/))) return treeScreen(m[1]);
+  if (p === "/start") return startScreen();
+  if (p === "/shelf") return shelfScreen();
+  return home();
+}
+route();
+</script>
+</body>
+</html>

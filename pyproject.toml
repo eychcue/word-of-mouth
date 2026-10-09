@@ -1,0 +1,21 @@
+[project]
+name = "word-of-mouth"
+version = "0.1.0"
+description = "Recs that only spread hand to hand between friends"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0",
+    "werkzeug>=3.0",
+    "qrcode>=7.4",
+]
+
+[project.scripts]
+word-of-mouth = "word_of_mouth.runner:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/word_of_mouth"]
